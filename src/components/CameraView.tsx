@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, type ChangeEvent } from 'react';
 import { addPhoto } from '../lib/db';
 import type { Photo } from '../types';
 
@@ -105,7 +105,7 @@ export function CameraView({
   }, [facing, onCaptured]);
 
   const handleFallbackFile = useCallback(
-    async (event: React.ChangeEvent<HTMLInputElement>) => {
+    async (event: ChangeEvent<HTMLInputElement>) => {
       const file = event.target.files?.[0];
       event.target.value = '';
       if (!file) return;

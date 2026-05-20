@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type FormEvent } from 'react';
 import type { Bookmark } from '../types';
 
 type Props = {
@@ -14,7 +14,7 @@ export function BookmarkEditor({ initial, onCancel, onSave }: Props) {
 
   const trimmedLabel = label.trim();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     if (!trimmedLabel) return;
     onSave({
