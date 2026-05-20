@@ -55,3 +55,17 @@ export async function deletePhoto(id: string): Promise<void> {
   const db = await getDB();
   await db.delete('photos', id);
 }
+
+// Test-only: close & drop the cached connection so the IDB instance can be
+// re-created from scratch (and so deleteDatabase isn't blocked by it).
+export async function __resetForTests(): Promise<void> {
+  if (dbPromise) {
+    try {
+      const db = await dbPromise;
+      db.close();
+    } catch {
+      // ignore — promise may have rejected already
+    }
+    dbPromise = null;
+  }
+}

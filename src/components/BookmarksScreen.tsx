@@ -68,6 +68,7 @@ export function BookmarksScreen({ onBack, toast }: Props) {
                   type="button"
                   className="bookmarklist__main"
                   onClick={() => setEditing(b)}
+                  aria-label={`Edit ${b.label}`}
                 >
                   <div className="bookmarklist__label">{b.label}</div>
                   {(b.title || b.text) && (

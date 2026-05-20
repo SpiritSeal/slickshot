@@ -9,3 +9,10 @@ dist-ssr
 *.tsbuildinfo
 .env
 .env.local
+
+# Test artifacts
+coverage
+playwright-report
+test-results
+.playwright
+blob-report
