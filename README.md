@@ -30,24 +30,28 @@ Vite serves on `0.0.0.0` so you can open the dev URL on your phone over the same
 
 ## Scripts
 
-| Script | What it does |
-| --- | --- |
-| `npm run dev` | Start the Vite dev server. |
-| `npm run build` | Type-check then build the production bundle (including the PWA manifest + service worker). |
-| `npm run preview` | Serve the production build locally. |
-| `npm run typecheck` | Run `tsc -b --noEmit` across the project references. |
-| `npm test` | Run the Vitest unit suite once. |
-| `npm run test:watch` | Vitest in watch mode. |
-| `npm run test:e2e` | Run the Playwright suite (`e2e/`). |
-| `npm run test:e2e:install` | Install Playwright's Chromium + system deps. |
-| `npm run test:all` | Typecheck, unit tests, and e2e tests in sequence. |
+| Script                     | What it does                                                                               |
+| -------------------------- | ------------------------------------------------------------------------------------------ |
+| `npm run dev`              | Start the Vite dev server.                                                                 |
+| `npm run build`            | Type-check then build the production bundle (including the PWA manifest + service worker). |
+| `npm run preview`          | Serve the production build locally.                                                        |
+| `npm run typecheck`        | Run `tsc -b --noEmit` across the project references.                                       |
+| `npm run lint`             | Run ESLint over the repo.                                                                  |
+| `npm run format`           | Format files with Prettier.                                                                |
+| `npm run format:check`     | Verify formatting without writing changes.                                                 |
+| `npm run icons`            | Regenerate the PWA PNG icon set from `public/favicon.svg`.                                 |
+| `npm test`                 | Run the Vitest unit suite once.                                                            |
+| `npm run test:watch`       | Vitest in watch mode.                                                                      |
+| `npm run test:e2e`         | Run the Playwright suite (`e2e/`).                                                         |
+| `npm run test:e2e:install` | Install Playwright's Chromium + system deps.                                               |
+| `npm run test:all`         | Typecheck, lint, format check, unit tests, and e2e tests in sequence.                      |
 
 ## Project layout
 
 ```
 src/
   App.tsx              Screen router (camera / gallery / viewer / bookmarks)
-  components/          UI: CameraView, Gallery, PhotoViewer, BookmarksScreen, ShareSheet, ...
+  components/          UI: CameraView, Gallery, PhotoViewer, BookmarksScreen, ShareSheet, Toast, useToast, ...
   lib/
     db.ts              IndexedDB photo store (idb)
     bookmarks.ts       localStorage-backed share presets
@@ -60,12 +64,24 @@ public/                Icons + favicon shipped to the PWA manifest
 scripts/gen-icons.mjs  Regenerate the PNG icon set
 ```
 
+## Linting & formatting
+
+The repo uses [ESLint](https://eslint.org/) (flat config in `eslint.config.js`) with `typescript-eslint`, `eslint-plugin-react-hooks`, and `eslint-plugin-react-refresh`, plus [Prettier](https://prettier.io/) for formatting (`.prettierrc.json`). `eslint-config-prettier` keeps the two from fighting.
+
+```bash
+npm run lint          # ESLint check
+npm run format        # write Prettier formatting
+npm run format:check  # verify formatting (used by CI)
+```
+
+Editor defaults (indent, line endings, final newline) are pinned in `.editorconfig`; Node version is pinned in `.nvmrc`.
+
 ## Icons
 
 PNG icons under `public/` are generated from `public/favicon.svg`:
 
 ```bash
-node scripts/gen-icons.mjs
+npm run icons
 ```
 
 ## Privacy
