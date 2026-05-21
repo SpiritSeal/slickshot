@@ -38,10 +38,16 @@ test.describe('Camera capture + share flow', () => {
     await expect(video).toBeVisible();
 
     // Wait until the video element actually has frames.
-    await page.waitForFunction(() => {
-      const v = document.querySelector('.camera__video') as HTMLVideoElement | null;
-      return !!v && v.readyState >= 2 && v.videoWidth > 0;
-    }, undefined, { timeout: 15_000 });
+    await page.waitForFunction(
+      () => {
+        const v = document.querySelector(
+          '.camera__video',
+        ) as HTMLVideoElement | null;
+        return !!v && v.readyState >= 2 && v.videoWidth > 0;
+      },
+      undefined,
+      { timeout: 15_000 },
+    );
 
     await page.getByRole('button', { name: /take photo/i }).click();
 
@@ -49,7 +55,10 @@ test.describe('Camera capture + share flow', () => {
     await expect(page.locator('.viewer__image')).toBeVisible();
 
     // Generic share.
-    await page.getByRole('button', { name: /^share/i }).first().click();
+    await page
+      .getByRole('button', { name: /^share/i })
+      .first()
+      .click();
 
     const shareCalls = await page.evaluate(
       () => (window as unknown as { __shareCalls: unknown[] }).__shareCalls,
@@ -88,16 +97,27 @@ test.describe('Camera capture + share flow', () => {
       localStorage.setItem(
         'slickshot.bookmarks',
         JSON.stringify([
-          { id: 'bm-mom', label: 'Mom', title: 'Hi Mom', text: 'Pic of the day' },
+          {
+            id: 'bm-mom',
+            label: 'Mom',
+            title: 'Hi Mom',
+            text: 'Pic of the day',
+          },
         ]),
       );
     });
 
     await page.goto('/');
-    await page.waitForFunction(() => {
-      const v = document.querySelector('.camera__video') as HTMLVideoElement | null;
-      return !!v && v.readyState >= 2 && v.videoWidth > 0;
-    }, undefined, { timeout: 15_000 });
+    await page.waitForFunction(
+      () => {
+        const v = document.querySelector(
+          '.camera__video',
+        ) as HTMLVideoElement | null;
+        return !!v && v.readyState >= 2 && v.videoWidth > 0;
+      },
+      undefined,
+      { timeout: 15_000 },
+    );
     await page.getByRole('button', { name: /take photo/i }).click();
     await expect(page.locator('.viewer__image')).toBeVisible();
 

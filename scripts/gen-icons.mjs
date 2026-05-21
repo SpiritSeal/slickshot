@@ -25,7 +25,8 @@ const crcTable = (() => {
 
 function crc32(buf) {
   let c = 0xffffffff;
-  for (let i = 0; i < buf.length; i++) c = crcTable[(c ^ buf[i]) & 0xff] ^ (c >>> 8);
+  for (let i = 0; i < buf.length; i++)
+    c = crcTable[(c ^ buf[i]) & 0xff] ^ (c >>> 8);
   return (c ^ 0xffffffff) >>> 0;
 }
 
@@ -53,7 +54,9 @@ function makePng(width, height, pixelFn) {
       raw[off + 3] = a;
     }
   }
-  const signature = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
+  const signature = Buffer.from([
+    0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a,
+  ]);
   const ihdr = Buffer.alloc(13);
   ihdr.writeUInt32BE(width, 0);
   ihdr.writeUInt32BE(height, 4);
@@ -100,7 +103,17 @@ function cameraPixel(size, maskableSafeRatio = 1) {
 
   return (x, y) => {
     // bump on top
-    if (insideRoundedRect(x, y, bumpLeft, bumpRight, bumpTop, bodyTop + 1, bumpH * 0.4)) {
+    if (
+      insideRoundedRect(
+        x,
+        y,
+        bumpLeft,
+        bumpRight,
+        bumpTop,
+        bodyTop + 1,
+        bumpH * 0.4,
+      )
+    ) {
       return FG;
     }
     // camera body

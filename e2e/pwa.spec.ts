@@ -14,7 +14,9 @@ test.describe('PWA shell', () => {
 
     const iconResp = await request.get('/icon-192.png');
     expect(iconResp.ok()).toBeTruthy();
-    expect(Number(iconResp.headers()['content-length'] ?? 0)).toBeGreaterThan(0);
+    expect(Number(iconResp.headers()['content-length'] ?? 0)).toBeGreaterThan(
+      0,
+    );
 
     await page.goto('/');
     const linkRel = await page.locator('link[rel="manifest"]').count();

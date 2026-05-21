@@ -26,7 +26,12 @@ export function BookmarkEditor({ initial, onCancel, onSave }: Props) {
   };
 
   return (
-    <div className="modal" role="dialog" aria-modal="true" aria-labelledby="bm-editor-title">
+    <div
+      className="modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="bm-editor-title"
+    >
       <div className="modal__backdrop" onClick={onCancel} />
       <form className="modal__panel" onSubmit={handleSubmit}>
         <h2 id="bm-editor-title" className="modal__title">
@@ -73,7 +78,11 @@ export function BookmarkEditor({ initial, onCancel, onSave }: Props) {
           <button type="button" className="btn btn--ghost" onClick={onCancel}>
             Cancel
           </button>
-          <button type="submit" className="btn btn--primary" disabled={!trimmedLabel}>
+          <button
+            type="submit"
+            className="btn btn--primary"
+            disabled={!trimmedLabel}
+          >
             Save
           </button>
         </div>

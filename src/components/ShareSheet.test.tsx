@@ -19,7 +19,10 @@ const realShare = (navigator as Navigator & { share?: unknown }).share;
 const realCanShare = (navigator as Navigator & { canShare?: unknown }).canShare;
 
 afterEach(() => {
-  Object.defineProperty(navigator, 'share', { configurable: true, value: realShare });
+  Object.defineProperty(navigator, 'share', {
+    configurable: true,
+    value: realShare,
+  });
   Object.defineProperty(navigator, 'canShare', {
     configurable: true,
     value: realCanShare,
@@ -37,15 +40,22 @@ describe('<ShareSheet />', () => {
 
     it('shows the standard Share label and calls navigator.share with the file', async () => {
       const share = vi.fn().mockResolvedValue(undefined);
-      Object.defineProperty(navigator, 'share', { configurable: true, value: share });
+      Object.defineProperty(navigator, 'share', {
+        configurable: true,
+        value: share,
+      });
 
       const user = userEvent.setup();
       const onSave = vi.fn();
       const toast = vi.fn();
-      render(<ShareSheet photo={mkPhoto()} onSaveToDevice={onSave} toast={toast} />);
+      render(
+        <ShareSheet photo={mkPhoto()} onSaveToDevice={onSave} toast={toast} />,
+      );
 
       await waitFor(() =>
-        expect(screen.getByRole('button', { name: /^share…/i })).toBeInTheDocument(),
+        expect(
+          screen.getByRole('button', { name: /^share…/i }),
+        ).toBeInTheDocument(),
       );
       await user.click(screen.getByRole('button', { name: /^share…/i }));
 
@@ -61,11 +71,18 @@ describe('<ShareSheet />', () => {
     it('renders a chip per bookmark and forwards its preset to navigator.share', async () => {
       saveBookmark({ label: 'Mom', title: 'Mom!', text: 'Pic of the day' });
       const share = vi.fn().mockResolvedValue(undefined);
-      Object.defineProperty(navigator, 'share', { configurable: true, value: share });
+      Object.defineProperty(navigator, 'share', {
+        configurable: true,
+        value: share,
+      });
 
       const user = userEvent.setup();
       render(
-        <ShareSheet photo={mkPhoto()} onSaveToDevice={() => {}} toast={() => {}} />,
+        <ShareSheet
+          photo={mkPhoto()}
+          onSaveToDevice={() => {}}
+          toast={() => {}}
+        />,
       );
 
       const chip = await screen.findByRole('button', { name: 'Mom' });
@@ -80,7 +97,11 @@ describe('<ShareSheet />', () => {
 
     it('does not show the unsupported hint', () => {
       render(
-        <ShareSheet photo={mkPhoto()} onSaveToDevice={() => {}} toast={() => {}} />,
+        <ShareSheet
+          photo={mkPhoto()}
+          onSaveToDevice={() => {}}
+          toast={() => {}}
+        />,
       );
       expect(
         screen.queryByText(/can't share files directly/i),
@@ -103,16 +124,24 @@ describe('<ShareSheet />', () => {
       const user = userEvent.setup();
       const onSave = vi.fn();
       const toast = vi.fn();
-      render(<ShareSheet photo={mkPhoto()} onSaveToDevice={onSave} toast={toast} />);
+      render(
+        <ShareSheet photo={mkPhoto()} onSaveToDevice={onSave} toast={toast} />,
+      );
 
       // Banner explaining the fallback should be visible.
-      expect(screen.getByText(/can't share files directly/i)).toBeInTheDocument();
+      expect(
+        screen.getByText(/can't share files directly/i),
+      ).toBeInTheDocument();
       // Share button label switches to "(download)".
-      const shareBtn = screen.getByRole('button', { name: /share \(download\)/i });
+      const shareBtn = screen.getByRole('button', {
+        name: /share \(download\)/i,
+      });
       await user.click(shareBtn);
       expect(onSave).toHaveBeenCalledOnce();
       expect(writeText).not.toHaveBeenCalled();
-      expect(toast).toHaveBeenCalledWith('Sharing not supported. Download starting…');
+      expect(toast).toHaveBeenCalledWith(
+        'Sharing not supported. Download starting…',
+      );
 
       // Bookmark chip also downloads, but additionally copies the caption.
       onSave.mockClear();
@@ -137,7 +166,9 @@ describe('<ShareSheet />', () => {
     });
     const user = userEvent.setup();
     const onSave = vi.fn();
-    render(<ShareSheet photo={mkPhoto()} onSaveToDevice={onSave} toast={() => {}} />);
+    render(
+      <ShareSheet photo={mkPhoto()} onSaveToDevice={onSave} toast={() => {}} />,
+    );
     await user.click(screen.getByRole('button', { name: /^save$/i }));
     expect(onSave).toHaveBeenCalledOnce();
   });

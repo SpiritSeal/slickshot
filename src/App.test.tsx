@@ -25,8 +25,12 @@ describe('<App /> screen navigation', () => {
     const user = userEvent.setup();
     render(<App />);
     await screen.findByText(/slickshot/i);
-    await user.click(await screen.findByRole('button', { name: /open gallery/i }));
-    expect(await screen.findByRole('heading', { name: /gallery/i })).toBeInTheDocument();
+    await user.click(
+      await screen.findByRole('button', { name: /open gallery/i }),
+    );
+    expect(
+      await screen.findByRole('heading', { name: /gallery/i }),
+    ).toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: /back to camera/i }));
     expect(await screen.findByText('Slickshot')).toBeInTheDocument();
   });
@@ -34,15 +38,27 @@ describe('<App /> screen navigation', () => {
   it('navigates to the bookmarks screen and back', async () => {
     const user = userEvent.setup();
     render(<App />);
-    await user.click(await screen.findByRole('button', { name: /manage bookmarks/i }));
-    expect(await screen.findByRole('heading', { name: /bookmarks/i })).toBeInTheDocument();
+    await user.click(
+      await screen.findByRole('button', { name: /manage bookmarks/i }),
+    );
+    expect(
+      await screen.findByRole('heading', { name: /bookmarks/i }),
+    ).toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: /^back$/i }));
     expect(await screen.findByText('Slickshot')).toBeInTheDocument();
   });
 
   it('shows a badge on the gallery button when photos exist', async () => {
-    await addPhoto({ blob: new Blob(['x'], { type: 'image/jpeg' }), width: 1, height: 1 });
-    await addPhoto({ blob: new Blob(['y'], { type: 'image/jpeg' }), width: 1, height: 1 });
+    await addPhoto({
+      blob: new Blob(['x'], { type: 'image/jpeg' }),
+      width: 1,
+      height: 1,
+    });
+    await addPhoto({
+      blob: new Blob(['y'], { type: 'image/jpeg' }),
+      width: 1,
+      height: 1,
+    });
     render(<App />);
     await waitFor(() => expect(screen.getByText('2')).toBeInTheDocument());
   });

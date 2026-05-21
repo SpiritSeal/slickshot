@@ -10,7 +10,9 @@ describe('<BookmarksScreen />', () => {
     render(<BookmarksScreen onBack={() => {}} toast={() => {}} />);
 
     expect(screen.getByText(/no bookmarks yet/i)).toBeInTheDocument();
-    await user.click(screen.getByRole('button', { name: /add your first bookmark/i }));
+    await user.click(
+      screen.getByRole('button', { name: /add your first bookmark/i }),
+    );
     expect(screen.getByRole('dialog')).toBeInTheDocument();
     expect(screen.getByText(/new bookmark/i)).toBeInTheDocument();
   });
