@@ -3,7 +3,8 @@ import { CameraView } from './components/CameraView';
 import { Gallery } from './components/Gallery';
 import { PhotoViewer } from './components/PhotoViewer';
 import { BookmarksScreen } from './components/BookmarksScreen';
-import { Toast, useToast } from './components/Toast';
+import { Toast } from './components/Toast';
+import { useToast } from './components/useToast';
 import { listPhotos } from './lib/db';
 import type { Photo } from './types';
 
