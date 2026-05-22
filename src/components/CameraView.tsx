@@ -1,4 +1,10 @@
-import { useCallback, useEffect, useRef, useState, type ChangeEvent } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type ChangeEvent,
+} from 'react';
 import { addPhoto } from '../lib/db';
 import type { Photo } from '../types';
 
@@ -143,7 +149,9 @@ export function CameraView({
         <button
           type="button"
           className="iconbtn"
-          onClick={() => setFacing((f) => (f === 'environment' ? 'user' : 'environment'))}
+          onClick={() =>
+            setFacing((f) => (f === 'environment' ? 'user' : 'environment'))
+          }
           aria-label="Switch camera"
           title="Switch camera"
           disabled={!!error}
@@ -180,7 +188,9 @@ export function CameraView({
             muted
           />
         )}
-        {starting && !error && <div className="camera__starting">Starting camera…</div>}
+        {starting && !error && (
+          <div className="camera__starting">Starting camera…</div>
+        )}
       </div>
 
       <div className="camera__controls">
@@ -191,7 +201,9 @@ export function CameraView({
           aria-label={`Open gallery (${galleryCount} photo${galleryCount === 1 ? '' : 's'})`}
         >
           <GalleryIcon />
-          {galleryCount > 0 && <span className="thumbbtn__badge">{galleryCount}</span>}
+          {galleryCount > 0 && (
+            <span className="thumbbtn__badge">{galleryCount}</span>
+          )}
         </button>
 
         <button
@@ -212,7 +224,16 @@ export function CameraView({
 
 function BookmarkIcon() {
   return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      width="22"
+      height="22"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
     </svg>
   );
@@ -220,7 +241,16 @@ function BookmarkIcon() {
 
 function FlipIcon() {
   return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      width="22"
+      height="22"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <path d="M17 1l4 4-4 4" />
       <path d="M3 11V9a4 4 0 0 1 4-4h14" />
       <path d="M7 23l-4-4 4-4" />
@@ -231,7 +261,16 @@ function FlipIcon() {
 
 function GalleryIcon() {
   return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      width="22"
+      height="22"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <rect x="3" y="3" width="18" height="18" rx="2" />
       <circle cx="8.5" cy="8.5" r="1.5" />
       <path d="M21 15l-5-5L5 21" />

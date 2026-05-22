@@ -25,7 +25,9 @@ export function listBookmarks(): Bookmark[] {
   return read();
 }
 
-export function saveBookmark(input: Omit<Bookmark, 'id'> & { id?: string }): Bookmark {
+export function saveBookmark(
+  input: Omit<Bookmark, 'id'> & { id?: string },
+): Bookmark {
   const items = read();
   if (input.id) {
     const idx = items.findIndex((b) => b.id === input.id);

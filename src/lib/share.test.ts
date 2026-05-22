@@ -11,7 +11,10 @@ const realShare = (navigator as Navigator & { share?: unknown }).share;
 const realCanShare = (navigator as Navigator & { canShare?: unknown }).canShare;
 
 afterEach(() => {
-  Object.defineProperty(navigator, 'share', { configurable: true, value: realShare });
+  Object.defineProperty(navigator, 'share', {
+    configurable: true,
+    value: realShare,
+  });
   Object.defineProperty(navigator, 'canShare', {
     configurable: true,
     value: realCanShare,
@@ -56,21 +59,33 @@ describe('canShareFiles', () => {
   });
 
   it('returns false when canShare is unavailable', () => {
-    Object.defineProperty(navigator, 'share', { configurable: true, value: vi.fn() });
+    Object.defineProperty(navigator, 'share', {
+      configurable: true,
+      value: vi.fn(),
+    });
     delete (navigator as { canShare?: unknown }).canShare;
     expect(canShareFiles(file)).toBe(false);
   });
 
   it('delegates to navigator.canShare when present', () => {
     const canShare = vi.fn().mockReturnValue(true);
-    Object.defineProperty(navigator, 'share', { configurable: true, value: vi.fn() });
-    Object.defineProperty(navigator, 'canShare', { configurable: true, value: canShare });
+    Object.defineProperty(navigator, 'share', {
+      configurable: true,
+      value: vi.fn(),
+    });
+    Object.defineProperty(navigator, 'canShare', {
+      configurable: true,
+      value: canShare,
+    });
     expect(canShareFiles(file)).toBe(true);
     expect(canShare).toHaveBeenCalledWith({ files: [file] });
   });
 
   it('returns false if canShare throws', () => {
-    Object.defineProperty(navigator, 'share', { configurable: true, value: vi.fn() });
+    Object.defineProperty(navigator, 'share', {
+      configurable: true,
+      value: vi.fn(),
+    });
     Object.defineProperty(navigator, 'canShare', {
       configurable: true,
       value: () => {
@@ -92,19 +107,31 @@ describe('sharePhoto', () => {
 
   it('invokes navigator.share with the file plus preset metadata', async () => {
     const share = vi.fn().mockResolvedValue(undefined);
-    Object.defineProperty(navigator, 'share', { configurable: true, value: share });
+    Object.defineProperty(navigator, 'share', {
+      configurable: true,
+      value: share,
+    });
     Object.defineProperty(navigator, 'canShare', {
       configurable: true,
       value: () => true,
     });
     const outcome = await sharePhoto(file, { title: 'hi', text: 'world' });
     expect(outcome).toEqual({ kind: 'shared' });
-    expect(share).toHaveBeenCalledWith({ files: [file], title: 'hi', text: 'world' });
+    expect(share).toHaveBeenCalledWith({
+      files: [file],
+      title: 'hi',
+      text: 'world',
+    });
   });
 
   it('treats user cancel (AbortError) as cancelled', async () => {
-    const share = vi.fn().mockRejectedValue(new DOMException('cancel', 'AbortError'));
-    Object.defineProperty(navigator, 'share', { configurable: true, value: share });
+    const share = vi
+      .fn()
+      .mockRejectedValue(new DOMException('cancel', 'AbortError'));
+    Object.defineProperty(navigator, 'share', {
+      configurable: true,
+      value: share,
+    });
     Object.defineProperty(navigator, 'canShare', {
       configurable: true,
       value: () => true,
@@ -115,7 +142,10 @@ describe('sharePhoto', () => {
 
   it('returns an error outcome when share rejects with a non-abort error', async () => {
     const share = vi.fn().mockRejectedValue(new Error('boom'));
-    Object.defineProperty(navigator, 'share', { configurable: true, value: share });
+    Object.defineProperty(navigator, 'share', {
+      configurable: true,
+      value: share,
+    });
     Object.defineProperty(navigator, 'canShare', {
       configurable: true,
       value: () => true,

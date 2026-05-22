@@ -53,7 +53,12 @@ export function PhotoViewer({ photoId, onBack, onDeleted, toast }: Props) {
     return (
       <div className="screen screen--dark">
         <header className="topbar topbar--dark">
-          <button type="button" className="iconbtn" onClick={onBack} aria-label="Back">
+          <button
+            type="button"
+            className="iconbtn"
+            onClick={onBack}
+            aria-label="Back"
+          >
             <BackIcon />
           </button>
           <h1 className="topbar__title">Loading…</h1>
@@ -66,7 +71,12 @@ export function PhotoViewer({ photoId, onBack, onDeleted, toast }: Props) {
   return (
     <div className="screen screen--dark">
       <header className="topbar topbar--dark">
-        <button type="button" className="iconbtn" onClick={onBack} aria-label="Back to gallery">
+        <button
+          type="button"
+          className="iconbtn"
+          onClick={onBack}
+          aria-label="Back to gallery"
+        >
           <BackIcon />
         </button>
         <h1 className="topbar__title">
@@ -93,7 +103,16 @@ export function PhotoViewer({ photoId, onBack, onDeleted, toast }: Props) {
 
 function BackIcon() {
   return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      width="22"
+      height="22"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <path d="M15 18l-6-6 6-6" />
     </svg>
   );
@@ -101,7 +120,16 @@ function BackIcon() {
 
 function TrashIcon() {
   return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      width="22"
+      height="22"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <polyline points="3 6 5 6 21 6" />
       <path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6" />
       <path d="M10 11v6" />

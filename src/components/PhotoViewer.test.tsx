@@ -59,7 +59,9 @@ describe('<PhotoViewer />', () => {
       />,
     );
     await waitFor(() =>
-      expect(screen.getByRole('button', { name: /delete photo/i })).toBeEnabled(),
+      expect(
+        screen.getByRole('button', { name: /delete photo/i }),
+      ).toBeEnabled(),
     );
 
     await user.click(screen.getByRole('button', { name: /delete photo/i }));
@@ -85,7 +87,9 @@ describe('<PhotoViewer />', () => {
       />,
     );
     await waitFor(() =>
-      expect(screen.getByRole('button', { name: /delete photo/i })).toBeEnabled(),
+      expect(
+        screen.getByRole('button', { name: /delete photo/i }),
+      ).toBeEnabled(),
     );
 
     await user.click(screen.getByRole('button', { name: /delete photo/i }));

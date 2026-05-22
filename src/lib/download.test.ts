@@ -7,8 +7,12 @@ describe('saveBlobToDevice', () => {
     const createSpy = vi
       .spyOn(URL, 'createObjectURL')
       .mockReturnValue('blob:fake-url');
-    const revokeSpy = vi.spyOn(URL, 'revokeObjectURL').mockImplementation(() => {});
-    const clickSpy = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {});
+    const revokeSpy = vi
+      .spyOn(URL, 'revokeObjectURL')
+      .mockImplementation(() => {});
+    const clickSpy = vi
+      .spyOn(HTMLAnchorElement.prototype, 'click')
+      .mockImplementation(() => {});
 
     const blob = new Blob(['x'], { type: 'image/jpeg' });
     saveBlobToDevice(blob, 'photo.jpg');

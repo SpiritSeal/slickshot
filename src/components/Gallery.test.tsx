@@ -41,7 +41,9 @@ describe('<Gallery />', () => {
       />,
     );
     expect(screen.getByText(/no photos yet/i)).toBeInTheDocument();
-    await user.click(screen.getByRole('button', { name: /take your first shot/i }));
+    await user.click(
+      screen.getByRole('button', { name: /take your first shot/i }),
+    );
     expect(onBack).toHaveBeenCalledOnce();
   });
 
