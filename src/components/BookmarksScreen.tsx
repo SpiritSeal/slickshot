@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { deleteBookmark, listBookmarks, saveBookmark } from '../lib/bookmarks';
+import { describeRoute } from '../lib/routes';
 import type { Bookmark } from '../types';
 import { BookmarkEditor } from './BookmarkEditor';
 
@@ -53,9 +54,10 @@ export function BookmarksScreen({ onBack, toast }: Props) {
 
       <div className="screen__body">
         <p className="screen__intro">
-          Bookmarks are share presets — a label plus an optional title and
-          caption. Tap one on a photo to open the system share sheet with the
-          message pre-filled.
+          Bookmarks save a share route — a label plus a destination. Tap one on
+          a photo to replay that route. Pick a Web Share preset for the system
+          share sheet, or an Apple Shortcut / Android Intent / URL scheme to
+          skip the picker.
         </p>
 
         {items.length === 0 ? (
@@ -80,11 +82,9 @@ export function BookmarksScreen({ onBack, toast }: Props) {
                   aria-label={`Edit ${b.label}`}
                 >
                   <div className="bookmarklist__label">{b.label}</div>
-                  {(b.title || b.text) && (
-                    <div className="bookmarklist__sub">
-                      {[b.title, b.text].filter(Boolean).join(' · ')}
-                    </div>
-                  )}
+                  <div className="bookmarklist__sub">
+                    {describeRoute(b.route)}
+                  </div>
                 </button>
                 <button
                   type="button"

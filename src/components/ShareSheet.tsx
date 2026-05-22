@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { listBookmarks } from '../lib/bookmarks';
+import { dispatchRoute } from '../lib/routes';
 import {
   blobToFile,
   canShareFiles,
@@ -28,27 +29,55 @@ export function ShareSheet({ photo, onSaveToDevice, toast }: Props) {
     setCanShare(canShareFiles(file));
   }, [photo]);
 
-  const runShare = async (preset?: Bookmark) => {
+  const reportOutcome = (
+    outcome: Awaited<ReturnType<typeof dispatchRoute>>,
+    runningMsg: string,
+  ) => {
+    if (outcome.kind === 'shared') toast(runningMsg);
+    else if (outcome.kind === 'cancelled') return;
+    else if (outcome.kind === 'unsupported')
+      toast('Sharing not supported on this browser');
+    else toast(`Share failed: ${outcome.message}`);
+  };
+
+  const runGenericShare = async () => {
     const file = blobToFile(photo.blob, photoFilename(photo.createdAt));
     if (canShareFiles(file)) {
-      const outcome = await sharePhoto(file, {
-        title: preset?.title ?? 'Slickshot photo',
-        text: preset?.text,
-      });
+      const outcome = await sharePhoto(file, { title: 'Slickshot photo' });
       if (outcome.kind === 'shared') toast('Shared');
       else if (outcome.kind === 'error')
         toast(`Share failed: ${outcome.message}`);
       return;
     }
-    // Fallback: copy caption (if any) + trigger download.
-    if (preset?.text) {
-      const ok = await copyTextToClipboard(preset.text);
-      if (ok) toast('Caption copied. Download starting…');
-      else toast('Sharing not supported. Download starting…');
-    } else {
-      toast('Sharing not supported. Download starting…');
-    }
+    toast('Sharing not supported. Download starting…');
     onSaveToDevice();
+  };
+
+  const runBookmark = async (bookmark: Bookmark) => {
+    const outcome = await dispatchRoute(bookmark.route, photo);
+    if (outcome.kind === 'unsupported' && bookmark.route.kind === 'web-share') {
+      if (bookmark.route.text) {
+        const ok = await copyTextToClipboard(bookmark.route.text);
+        toast(
+          ok
+            ? 'Caption copied. Download starting…'
+            : 'Sharing not supported. Download starting…',
+        );
+      } else {
+        toast('Sharing not supported. Download starting…');
+      }
+      onSaveToDevice();
+      return;
+    }
+    const runningMsg =
+      bookmark.route.kind === 'web-share'
+        ? 'Shared'
+        : bookmark.route.kind === 'apple-shortcut'
+          ? 'Running shortcut…'
+          : bookmark.route.kind === 'android-intent'
+            ? 'Opening app…'
+            : 'Opening…';
+    reportOutcome(outcome, runningMsg);
   };
 
   return (
@@ -57,7 +86,7 @@ export function ShareSheet({ photo, onSaveToDevice, toast }: Props) {
         <button
           type="button"
           className="btn btn--primary btn--share"
-          onClick={() => runShare()}
+          onClick={runGenericShare}
         >
           <ShareIcon />
           <span>{canShare ? 'Share…' : 'Share (download)'}</span>
@@ -81,8 +110,8 @@ export function ShareSheet({ photo, onSaveToDevice, toast }: Props) {
                 key={b.id}
                 type="button"
                 className="chip"
-                onClick={() => runShare(b)}
-                title={[b.title, b.text].filter(Boolean).join(' · ')}
+                onClick={() => runBookmark(b)}
+                title={b.route.kind}
               >
                 {b.label}
               </button>

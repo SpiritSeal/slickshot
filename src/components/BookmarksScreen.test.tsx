@@ -25,7 +25,7 @@ describe('<BookmarksScreen />', () => {
     await user.click(screen.getByRole('button', { name: /add bookmark/i }));
     await user.type(screen.getByLabelText(/label/i), 'Mom');
     await user.type(screen.getByLabelText(/caption/i), 'Daily pic');
-    await user.click(screen.getByRole('button', { name: /save/i }));
+    await user.click(screen.getByRole('button', { name: /^save$/i }));
 
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     expect(screen.getByText('Mom')).toBeInTheDocument();
@@ -35,7 +35,10 @@ describe('<BookmarksScreen />', () => {
   });
 
   it('edits an existing bookmark', async () => {
-    saveBookmark({ label: 'Friend', text: 'hi' });
+    saveBookmark({
+      label: 'Friend',
+      route: { kind: 'web-share', text: 'hi' },
+    });
     const user = userEvent.setup();
     const toast = vi.fn();
     render(<BookmarksScreen onBack={() => {}} toast={toast} />);
@@ -44,7 +47,7 @@ describe('<BookmarksScreen />', () => {
     const input = screen.getByLabelText(/label/i);
     await user.clear(input);
     await user.type(input, 'Best Friend');
-    await user.click(screen.getByRole('button', { name: /save/i }));
+    await user.click(screen.getByRole('button', { name: /^save$/i }));
 
     expect(screen.getByText('Best Friend')).toBeInTheDocument();
     expect(toast).toHaveBeenCalledWith('Bookmark updated');
@@ -52,7 +55,7 @@ describe('<BookmarksScreen />', () => {
   });
 
   it('deletes a bookmark after confirmation', async () => {
-    saveBookmark({ label: 'Doomed' });
+    saveBookmark({ label: 'Doomed', route: { kind: 'web-share' } });
     const user = userEvent.setup();
     const toast = vi.fn();
     const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(true);
@@ -66,7 +69,7 @@ describe('<BookmarksScreen />', () => {
   });
 
   it('does not delete when the confirmation is cancelled', async () => {
-    saveBookmark({ label: 'Keep me' });
+    saveBookmark({ label: 'Keep me', route: { kind: 'web-share' } });
     const user = userEvent.setup();
     vi.spyOn(window, 'confirm').mockReturnValue(false);
     render(<BookmarksScreen onBack={() => {}} toast={() => {}} />);

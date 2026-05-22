@@ -25,7 +25,7 @@ if (typeof Blob !== 'undefined' && !Blob.prototype.arrayBuffer) {
 }
 
 // jsdom 25 doesn't ship navigator.clipboard. Install a minimal polyfill so
-// tests can vi.spyOn navigator.clipboard.writeText.
+// tests can vi.spyOn navigator.clipboard.writeText / .write.
 if (!navigator.clipboard) {
   Object.defineProperty(navigator, 'clipboard', {
     configurable: true,
@@ -33,8 +33,23 @@ if (!navigator.clipboard) {
     value: {
       writeText: async (_: string) => undefined,
       readText: async () => '',
+      write: async (_: unknown[]) => undefined,
+      read: async () => [],
     },
   });
+}
+
+if (
+  typeof (globalThis as { ClipboardItem?: unknown }).ClipboardItem ===
+  'undefined'
+) {
+  class FakeClipboardItem {
+    readonly types: string[];
+    constructor(public readonly data: Record<string, Blob>) {
+      this.types = Object.keys(data);
+    }
+  }
+  (globalThis as { ClipboardItem: unknown }).ClipboardItem = FakeClipboardItem;
 }
 
 // Reset DOM and the in-memory IndexedDB between tests so each starts clean.

@@ -3,7 +3,12 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ShareSheet } from './ShareSheet';
 import { saveBookmark } from '../lib/bookmarks';
+import { openUrl } from '../lib/nav';
 import type { Photo } from '../types';
+
+vi.mock('../lib/nav', () => ({
+  openUrl: vi.fn(),
+}));
 
 function mkPhoto(): Photo {
   return {
@@ -68,8 +73,11 @@ describe('<ShareSheet />', () => {
       expect(onSave).not.toHaveBeenCalled();
     });
 
-    it('renders a chip per bookmark and forwards its preset to navigator.share', async () => {
-      saveBookmark({ label: 'Mom', title: 'Mom!', text: 'Pic of the day' });
+    it('renders a chip per web-share bookmark and forwards its preset to navigator.share', async () => {
+      saveBookmark({
+        label: 'Mom',
+        route: { kind: 'web-share', title: 'Mom!', text: 'Pic of the day' },
+      });
       const share = vi.fn().mockResolvedValue(undefined);
       Object.defineProperty(navigator, 'share', {
         configurable: true,
@@ -107,6 +115,37 @@ describe('<ShareSheet />', () => {
         screen.queryByText(/can't share files directly/i),
       ).not.toBeInTheDocument();
     });
+
+    it('dispatches an apple-shortcut bookmark via the shortcuts:// URL', async () => {
+      saveBookmark({
+        label: 'Shortcut',
+        route: {
+          kind: 'apple-shortcut',
+          shortcutName: 'Send to Mom',
+          passImageVia: 'clipboard',
+        },
+      });
+      const writeSpy = vi
+        .spyOn(navigator.clipboard, 'write')
+        .mockResolvedValue(undefined);
+      vi.mocked(openUrl).mockClear();
+      const user = userEvent.setup();
+      const toast = vi.fn();
+      render(
+        <ShareSheet
+          photo={mkPhoto()}
+          onSaveToDevice={() => {}}
+          toast={toast}
+        />,
+      );
+      const chip = await screen.findByRole('button', { name: 'Shortcut' });
+      await user.click(chip);
+      await waitFor(() => expect(writeSpy).toHaveBeenCalled());
+      expect(vi.mocked(openUrl)).toHaveBeenCalledWith(
+        'shortcuts://run-shortcut?name=Send%20to%20Mom',
+      );
+      expect(toast).toHaveBeenCalledWith('Running shortcut…');
+    });
   });
 
   describe('when file sharing is NOT supported', () => {
@@ -115,9 +154,11 @@ describe('<ShareSheet />', () => {
       delete (navigator as { canShare?: unknown }).canShare;
     });
 
-    it('falls back to downloading on Share tap and copies the bookmark caption', async () => {
-      saveBookmark({ label: 'Mom', text: 'Pic of the day' });
-      // jsdom has a Clipboard implementation we can spy on directly.
+    it('falls back to downloading on Share tap and copies a web-share bookmark caption', async () => {
+      saveBookmark({
+        label: 'Mom',
+        route: { kind: 'web-share', text: 'Pic of the day' },
+      });
       const writeText = vi
         .spyOn(navigator.clipboard, 'writeText')
         .mockResolvedValue(undefined);
@@ -128,11 +169,9 @@ describe('<ShareSheet />', () => {
         <ShareSheet photo={mkPhoto()} onSaveToDevice={onSave} toast={toast} />,
       );
 
-      // Banner explaining the fallback should be visible.
       expect(
         screen.getByText(/can't share files directly/i),
       ).toBeInTheDocument();
-      // Share button label switches to "(download)".
       const shareBtn = screen.getByRole('button', {
         name: /share \(download\)/i,
       });
@@ -143,7 +182,6 @@ describe('<ShareSheet />', () => {
         'Sharing not supported. Download starting…',
       );
 
-      // Bookmark chip also downloads, but additionally copies the caption.
       onSave.mockClear();
       toast.mockClear();
       await user.click(screen.getByRole('button', { name: 'Mom' }));
