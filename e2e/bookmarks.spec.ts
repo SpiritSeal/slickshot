@@ -52,7 +52,7 @@ test.describe('Bookmarks CRUD', () => {
     await expect(page.getByText('Mom')).toBeVisible();
 
     // Edit.
-    await page.getByRole('button', { name: /^Mom/ }).click();
+    await page.getByRole('button', { name: /edit mom/i }).click();
     const label = page.getByLabel(/label/i);
     await label.fill('Mom & Dad');
     await page.getByRole('button', { name: /^save$/i }).click();
