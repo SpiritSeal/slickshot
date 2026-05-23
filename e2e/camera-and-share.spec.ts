@@ -100,8 +100,11 @@ test.describe('Camera capture + share flow', () => {
           {
             id: 'bm-mom',
             label: 'Mom',
-            title: 'Hi Mom',
-            text: 'Pic of the day',
+            route: {
+              kind: 'web-share',
+              title: 'Hi Mom',
+              text: 'Pic of the day',
+            },
           },
         ]),
       );

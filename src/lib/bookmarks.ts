@@ -1,6 +1,57 @@
-import type { Bookmark } from '../types';
+import type { Bookmark, ShareRoute } from '../types';
 
 const KEY = 'slickshot.bookmarks';
+
+export function isShareRoute(value: unknown): value is ShareRoute {
+  if (!value || typeof value !== 'object') return false;
+  const r = value as Record<string, unknown>;
+  switch (r.kind) {
+    case 'web-share':
+      return (
+        (r.title === undefined || typeof r.title === 'string') &&
+        (r.text === undefined || typeof r.text === 'string')
+      );
+    case 'apple-shortcut':
+      return (
+        typeof r.shortcutName === 'string' &&
+        r.shortcutName.length > 0 &&
+        (r.passImageVia === 'clipboard' || r.passImageVia === 'none')
+      );
+    case 'android-intent':
+      return (
+        typeof r.package === 'string' &&
+        r.package.length > 0 &&
+        typeof r.action === 'string' &&
+        r.action.length > 0 &&
+        typeof r.mimeType === 'string' &&
+        r.mimeType.length > 0 &&
+        (r.text === undefined || typeof r.text === 'string') &&
+        (r.passImageVia === 'clipboard' || r.passImageVia === 'none')
+      );
+    case 'url-scheme':
+      return (
+        typeof r.template === 'string' &&
+        r.template.length > 0 &&
+        (r.recipient === undefined || typeof r.recipient === 'string') &&
+        (r.text === undefined || typeof r.text === 'string') &&
+        (r.passImageVia === 'clipboard' ||
+          r.passImageVia === 'download' ||
+          r.passImageVia === 'none')
+      );
+    default:
+      return false;
+  }
+}
+
+function isBookmark(value: unknown): value is Bookmark {
+  if (!value || typeof value !== 'object') return false;
+  const b = value as Record<string, unknown>;
+  return (
+    typeof b.id === 'string' &&
+    typeof b.label === 'string' &&
+    isShareRoute(b.route)
+  );
+}
 
 function read(): Bookmark[] {
   try {
@@ -8,10 +59,7 @@ function read(): Bookmark[] {
     if (!raw) return [];
     const parsed = JSON.parse(raw);
     if (!Array.isArray(parsed)) return [];
-    return parsed.filter(
-      (b): b is Bookmark =>
-        b && typeof b.id === 'string' && typeof b.label === 'string',
-    );
+    return parsed.filter(isBookmark);
   } catch {
     return [];
   }
@@ -34,8 +82,7 @@ export function saveBookmark(
     const updated: Bookmark = {
       id: input.id,
       label: input.label,
-      title: input.title,
-      text: input.text,
+      route: input.route,
     };
     if (idx >= 0) items[idx] = updated;
     else items.push(updated);
@@ -45,8 +92,7 @@ export function saveBookmark(
   const created: Bookmark = {
     id: crypto.randomUUID(),
     label: input.label,
-    title: input.title,
-    text: input.text,
+    route: input.route,
   };
   items.push(created);
   write(items);

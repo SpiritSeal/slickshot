@@ -70,3 +70,16 @@ export async function copyTextToClipboard(text: string): Promise<boolean> {
   }
   return false;
 }
+
+export async function copyImageToClipboard(blob: Blob): Promise<boolean> {
+  try {
+    if (typeof ClipboardItem === 'undefined' || !navigator.clipboard?.write) {
+      return false;
+    }
+    const item = new ClipboardItem({ [blob.type || 'image/jpeg']: blob });
+    await navigator.clipboard.write([item]);
+    return true;
+  } catch {
+    return false;
+  }
+}

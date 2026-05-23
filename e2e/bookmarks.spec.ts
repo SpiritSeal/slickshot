@@ -19,7 +19,7 @@ test.describe('Bookmarks CRUD', () => {
     ).toBeVisible();
   });
 
-  test('add, edit, and delete a bookmark; persists across reload', async ({
+  test('add, edit, and delete a web-share bookmark; persists across reload', async ({
     page,
   }) => {
     await page
@@ -36,6 +36,7 @@ test.describe('Bookmarks CRUD', () => {
       .getByRole('button', { name: /add your first bookmark/i })
       .click();
     await page.getByLabel(/label/i).fill('Mom');
+    // Web Share is the default route kind.
     await page.getByLabel(/caption/i).fill('Daily pic');
     await page.getByRole('button', { name: /^save$/i }).click();
 
@@ -79,5 +80,46 @@ test.describe('Bookmarks CRUD', () => {
     page.once('dialog', (dialog) => dialog.dismiss());
     await page.getByRole('button', { name: /delete keep me/i }).click();
     await expect(page.getByText('Keep me')).toBeVisible();
+  });
+
+  test('creates an Apple Shortcut bookmark and lists its route', async ({
+    page,
+  }) => {
+    await page
+      .getByRole('button', { name: /manage bookmarks/i })
+      .first()
+      .click();
+    await page
+      .getByRole('button', { name: /add your first bookmark/i })
+      .click();
+    await page.getByLabel(/label/i).fill('Shortcut');
+    await page.getByRole('button', { name: /apple shortcut/i }).click();
+    await page.getByLabel(/shortcut name/i).fill('Send to Mom');
+    await page.getByRole('button', { name: /^save$/i }).click();
+
+    await expect(page.getByText('Apple Shortcut · Send to Mom')).toBeVisible();
+  });
+
+  test('creates a URL scheme bookmark using the WhatsApp preset', async ({
+    page,
+  }) => {
+    await page
+      .getByRole('button', { name: /manage bookmarks/i })
+      .first()
+      .click();
+    await page
+      .getByRole('button', { name: /add your first bookmark/i })
+      .click();
+    await page.getByLabel(/label/i).fill('Group chat');
+    await page.getByRole('button', { name: /url scheme/i }).click();
+    await page.getByRole('button', { name: 'WhatsApp' }).click();
+    await expect(page.getByLabel(/url template/i)).toHaveValue(
+      'https://wa.me/{recipient}?text={text}',
+    );
+    await page.getByRole('button', { name: /^save$/i }).click();
+
+    await expect(
+      page.getByText('URL · https://wa.me/{recipient}?text={text}'),
+    ).toBeVisible();
   });
 });
